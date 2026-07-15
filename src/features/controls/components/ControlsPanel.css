@@ -3,6 +3,7 @@
   top: 1vw;
   right: 1vw;
   width: 20vw;
+  min-width: 260px;
   height: var(--panel-collapsed-h);
   padding-block: 0.5vw;
   padding-inline: 0.5vw;
@@ -50,42 +51,6 @@
   display: flex;
   align-items: center;
   gap: 0.5vw;
-}
-
-.panel-screenshot {
-  height: 1.4vw;
-  width: 1.4vw;
-  border: 0.3vw dashed var(--accent);
-  border-radius: 0.2vw;
-  background: transparent;
-  cursor: pointer;
-  padding: 0;
-}
-
-.panel-screencast {
-  height: 1.6vw;
-  width: 1.6vw;
-  border: none;
-  border-radius: 100%;
-  background-color: #bb0000;
-  cursor: pointer;
-  padding: 0;
-}
-
-.panel-screencast.is-recording {
-  animation: recording-pulse 1s ease-in-out infinite;
-}
-
-@keyframes recording-pulse {
-  0%,
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.4;
-    transform: scale(0.85);
-  }
 }
 
 .panel-play,
@@ -186,7 +151,6 @@
 }
 
 .settings-tab-menu {
-  padding-inline-start: 1vw;
   display: flex;
   flex-direction: column;
   align-items: stretch;
