@@ -15,6 +15,9 @@ import './ExportPanel.css';
 const MIN_DIMENSION = 16;
 const MAX_DIMENSION = 8192;
 
+/** Selectable capture frame rates for video export. */
+const FPS_OPTIONS = [24, 30, 60, 90, 120] as const;
+
 /** Parse a dimension input into a safe, integer pixel size. */
 function clampDimension(value: string): number {
   const parsed = Math.round(Number(value));
@@ -30,6 +33,7 @@ export function ExportPanel() {
   const [resolutionId, setResolutionId] = useState(defaultResolutionId);
   const [customWidth, setCustomWidth] = useState('1600');
   const [customHeight, setCustomHeight] = useState('900');
+  const [fps, setFps] = useState(60);
   const [savingPng, setSavingPng] = useState(false);
   const [recording, setRecording] = useState(false);
   const [embedCopied, setEmbedCopied] = useState(false);
@@ -80,7 +84,7 @@ export function ExportPanel() {
         config,
         resolution.width,
         resolution.height,
-        { fps: 60 },
+        { fps },
       );
       setRecording(true);
     } catch {
@@ -166,6 +170,21 @@ export function ExportPanel() {
 
         <div className="export-group">
           <p className="export-group-title">Media</p>
+          <label className="export-field">
+            <span className="export-field-label">Video frame rate</span>
+            <select
+              className="setting-select export-field-select"
+              value={fps}
+              onChange={(event) => setFps(Number(event.target.value))}
+              disabled={recording}
+            >
+              {FPS_OPTIONS.map((value) => (
+                <option key={value} value={value}>
+                  {value > 60 ? `${value} fps (120Hz display)` : `${value} fps`}
+                </option>
+              ))}
+            </select>
+          </label>
           <div className="export-actions">
             <button
               type="button"

@@ -100,6 +100,23 @@
   flex-shrink: 0;
 }
 
+.export-field {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6vw;
+}
+
+.export-field-label {
+  font-size: 0.85vw;
+  color: var(--text-dim);
+}
+
+.export-field-select {
+  width: auto;
+  min-width: 6vw;
+}
+
 .export-hint {
   font-size: 0.8vw;
   color: var(--text-dim);
