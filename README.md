@@ -4,6 +4,8 @@ Design **live, animated gradients** in your browser, then export them as images 
 video for social posts, posters, and website backgrounds — or drop them into any
 page as a ready-made web component.
 
+[![Auragen — design live, animated gradients in the browser](docs/hero.gif)](https://intredd.github.io/auragen/)
+
 ### ▶ [Try it live → intredd.github.io/auragen](https://intredd.github.io/auragen/)
 
 No install, no sign-up. Open the link, tweak a scene, hit export.
@@ -21,7 +23,8 @@ No install, no sign-up. Open the link, tweak a scene, hit export.
   them where they overlap.
 - **Start from a preset** in the Demo menu (Aurora, Morph, Layered rings) and make
   it your own.
-- **Export** a PNG or a WebM video at a preset or fully custom resolution.
+- **Export** a PNG or a WebM video at a preset or custom resolution, with a
+  selectable frame rate.
 - **Share** a scene with a link, or **embed** it on your own site.
 
 ## How to use
@@ -46,7 +49,7 @@ No install, no sign-up. Open the link, tweak a scene, hit export.
 6. **Export or share.** Open the **Export** menu to:
    - save a **PNG**,
    - record a **video** (play/stop — you control the length),
-   - choose a **preset or custom resolution**,
+   - choose a **resolution** and **frame rate**,
    - **copy a share link** or the **embed code**.
 
 ## Embed on your site
@@ -71,6 +74,10 @@ updates live.
 
 Auragen started life as a CodePen demo (`Gradientv3`) and grew into a full
 utility. The rest of this document covers the internals.
+
+**Under the hood:** soft circular fields composited on the GPU, with per-blob
+deformation and Layer/Blend modes — an approach I built up myself from that old
+CodePen experiment, rather than pulling in an off-the-shelf gradient library.
 
 ## Stack
 
@@ -176,3 +183,13 @@ interface GradientConfig { version: number; blobs: Blob[]; global: GlobalSetting
 
 `embed-example.html` is a local smoke-test page (`npm run build:embed`, then serve
 the repo root).
+
+## License
+
+MIT — see [`LICENSE`](LICENSE). Free to use, fork, and embed.
+
+---
+
+Built by **Alex Ivanov** — frontend engineer focused on interactive sites, WebGL,
+and motion.
+[LinkedIn](https://www.linkedin.com/in/intredd/)
