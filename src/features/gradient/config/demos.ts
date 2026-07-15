@@ -35,21 +35,28 @@ function concentricScene(): GradientConfig {
   };
 }
 
-/** Lava lamp — a few warm blobs with heavy, slow morphing. */
-function lavaScene(): GradientConfig {
-  const shared = {
-    smoothStep: 0.4,
-    cornerSmoothing: 0.5,
-    deformationRatio: 2.1,
-    deformationSpeed: 0.24,
-  };
+/**
+ * Morph — a single small ember with near-max wobble amount relative to its size,
+ * fast global speed and gentle wobble. Shows how heavy deformation makes one blob
+ * writhe and throw out tendrils.
+ */
+function morphScene(): GradientConfig {
   return {
     version: CONFIG_VERSION,
-    global: { backgroundColor: '#1a0500', speed: 0.25, blendMode: 'blend' },
+    global: { backgroundColor: '#1a0500', speed: 1.58, blendMode: 'layer' },
     blobs: [
-      createBlob({ ...shared, position: { x: 0.4, y: 0.62 }, size: 0.36, separation: 0.38, color: '#ff3d00' }),
-      createBlob({ ...shared, position: { x: 0.6, y: 0.42 }, size: 0.3, separation: 0.34, color: '#ffb300' }),
-      createBlob({ ...shared, position: { x: 0.5, y: 0.82 }, size: 0.3, separation: 0.32, color: '#c81e00' }),
+      createBlob({
+        position: { x: 0.448, y: 0.39 },
+        size: 0.088,
+        scale: 1,
+        angle: 0,
+        smoothStep: 0.4,
+        cornerSmoothing: 0.6,
+        deformationRatio: 2.45,
+        separation: 0.495,
+        deformationSpeed: 0.24,
+        color: '#ff3d00',
+      }),
     ],
   };
 }
@@ -62,10 +69,10 @@ export const demos: Demo[] = [
     create: createDefaultConfig,
   },
   {
-    id: 'lava',
-    label: 'Lava Lamp',
-    swatches: ['#ff3d00', '#ffb300', '#c81e00'],
-    create: lavaScene,
+    id: 'morph',
+    label: 'Morph',
+    swatches: ['#ff3d00'],
+    create: morphScene,
   },
   {
     id: 'concentric',
