@@ -318,6 +318,54 @@
   border: 1px solid var(--hairline);
 }
 
+/* Demo scenes ---------------------------------------------------------- */
+
+.demo-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4vw;
+}
+
+.demo-chip {
+  display: flex;
+  align-items: center;
+  gap: 0.6vw;
+  padding: 0.35vw 0.5vw;
+  font-size: 0.85vw;
+  text-align: left;
+  border: 1px solid transparent;
+  border-radius: 0.3vw;
+  background: var(--surface);
+  color: inherit;
+  cursor: pointer;
+}
+
+.demo-chip.is-selected {
+  border-color: var(--accent);
+  background: var(--surface-strong);
+}
+
+.demo-swatches {
+  display: inline-flex;
+  flex-shrink: 0;
+}
+
+.demo-swatch {
+  width: 0.85vw;
+  height: 0.85vw;
+  border-radius: 100%;
+  border: 1px solid var(--hairline);
+  margin-left: -0.25vw;
+}
+
+.demo-swatch:first-child {
+  margin-left: 0;
+}
+
+.demo-chip-label {
+  flex: 1;
+}
+
 .reveal-toggle {
   align-self: flex-start;
   padding: 0.1vw 0;

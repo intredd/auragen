@@ -50,17 +50,27 @@ export function ControlsPanel() {
           <div className="settings-tab-header">
             <p className="settings-tab-name">Demo</p>
           </div>
-          <select
-            className="setting-select"
-            value={activeDemo}
-            onChange={(event) => handleDemoChange(event.target.value)}
-          >
+          <div className="demo-list">
             {demos.map((demo) => (
-              <option key={demo.id} value={demo.id}>
-                {demo.label}
-              </option>
+              <button
+                key={demo.id}
+                type="button"
+                className={`demo-chip${demo.id === activeDemo ? ' is-selected' : ''}`}
+                onClick={() => handleDemoChange(demo.id)}
+              >
+                <span className="demo-swatches">
+                  {demo.swatches.map((color, index) => (
+                    <span
+                      key={index}
+                      className="demo-swatch"
+                      style={{ backgroundColor: color }}
+                    />
+                  ))}
+                </span>
+                <span className="demo-chip-label">{demo.label}</span>
+              </button>
             ))}
-          </select>
+          </div>
         </section>
 
         <section className="settings-tab">

@@ -50,33 +50,24 @@ export const DEFAULT_GLOBAL: GlobalSettings = {
 };
 
 /**
- * Default scene — two well-separated blobs with a pink↔violet palette over a
- * deep-purple background. Their deformation is intentionally slightly different
- * so the motion doesn't look mirrored.
+ * Default scene ("Aurora") — tall, tilted oval streaks in teal/green/violet
+ * over near-black navy, colors blended, with a lively wobble.
  */
 export function createDefaultConfig(): GradientConfig {
+  const shared = {
+    smoothStep: 0.5,
+    cornerSmoothing: 0.55,
+    deformationRatio: 3.5,
+    separation: 0.18,
+    deformationSpeed: 0.6,
+  };
   return {
     version: CONFIG_VERSION,
-    global: { ...DEFAULT_GLOBAL },
+    global: { backgroundColor: '#030a18', speed: 0.5, colorBlend: true },
     blobs: [
-      createBlob({
-        position: { x: 0.24, y: 0.28 },
-        size: 0.13,
-        color: '#ff5fa2',
-        smoothStep: 0.21,
-        deformationRatio: 2.95,
-        separation: 0.285,
-        deformationSpeed: 0.51,
-      }),
-      createBlob({
-        position: { x: 0.78, y: 0.74 },
-        size: 0.3,
-        color: '#6a5cff',
-        smoothStep: 0.38,
-        deformationRatio: 3.45,
-        separation: 0.295,
-        deformationSpeed: 0.49,
-      }),
+      createBlob({ ...shared, position: { x: 0.32, y: 0.55 }, size: 0.26, scale: 2.4, angle: 20, color: '#17e6a0' }),
+      createBlob({ ...shared, position: { x: 0.55, y: 0.5 }, size: 0.22, scale: 2.2, angle: 160, color: '#4dff7a' }),
+      createBlob({ ...shared, position: { x: 0.7, y: 0.6 }, size: 0.24, scale: 2.6, angle: 30, separation: 0.2, color: '#7a5cff' }),
     ],
   };
 }
