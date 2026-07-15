@@ -14,6 +14,13 @@ import {
 /** URL query key that holds the encoded preset. */
 export const PRESET_QUERY_KEY = 'p';
 
+/**
+ * Canonical public URL where the app is hosted. Share links are built against
+ * this so they keep working when generated off `localhost` (or any preview
+ * origin). Set to an empty string to fall back to the current page origin.
+ */
+export const SITE_URL = 'https://intredd.github.io/auragen/';
+
 function toBase64Url(value: string): string {
   return btoa(value).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 }
@@ -119,13 +126,19 @@ export function readConfigFromUrl(): GradientConfig | null {
   return deserializeConfig(encoded);
 }
 
-/** Build a shareable URL that encodes the given config. */
+/**
+ * Build a shareable URL that encodes the given config.
+ *
+ * Prefers an explicit `baseUrl`, then the canonical {@link SITE_URL}, and only
+ * falls back to the current page origin when neither is set — so a link copied
+ * from `localhost` still points at the deployed site.
+ */
 export function buildShareUrl(config: GradientConfig, baseUrl?: string): string {
-  const base =
-    baseUrl ??
-    (typeof window !== 'undefined'
+  const originBase =
+    typeof window !== 'undefined'
       ? `${window.location.origin}${window.location.pathname}`
-      : '');
+      : '';
+  const base = baseUrl ?? (SITE_URL || originBase);
 
   const search = new URLSearchParams();
   search.set(PRESET_QUERY_KEY, serializeConfig(config));
