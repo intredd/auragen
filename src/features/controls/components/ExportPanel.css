@@ -75,6 +75,31 @@
   color: var(--text-dim);
 }
 
+.export-dims {
+  display: flex;
+  align-items: center;
+  gap: 0.4vw;
+}
+
+.setting-input {
+  width: 100%;
+  min-width: 0;
+  padding: 0.3vw 0.5vw;
+  border-radius: 0.2vw;
+  border: 1px solid var(--panel-border);
+  background: var(--surface);
+  color: inherit;
+  font-size: 0.85vw;
+  font-variant-numeric: tabular-nums;
+}
+
+.export-dims-x,
+.export-dims-unit {
+  font-size: 0.85vw;
+  color: var(--text-dim);
+  flex-shrink: 0;
+}
+
 .export-hint {
   font-size: 0.8vw;
   color: var(--text-dim);

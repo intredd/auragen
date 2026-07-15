@@ -12,12 +12,24 @@ import {
 } from '../../export';
 import './ExportPanel.css';
 
+const MIN_DIMENSION = 16;
+const MAX_DIMENSION = 8192;
+
+/** Parse a dimension input into a safe, integer pixel size. */
+function clampDimension(value: string): number {
+  const parsed = Math.round(Number(value));
+  if (!Number.isFinite(parsed)) return MIN_DIMENSION;
+  return Math.min(MAX_DIMENSION, Math.max(MIN_DIMENSION, parsed));
+}
+
 /** Standalone export menu (still image, clip, and embed snippet). */
 export function ExportPanel() {
   const isOpen = useGradientStore((state) => state.isExportOpen);
   const setExportOpen = useGradientStore((state) => state.setExportOpen);
 
   const [resolutionId, setResolutionId] = useState(defaultResolutionId);
+  const [customWidth, setCustomWidth] = useState('1600');
+  const [customHeight, setCustomHeight] = useState('900');
   const [savingPng, setSavingPng] = useState(false);
   const [recording, setRecording] = useState(false);
   const [embedCopied, setEmbedCopied] = useState(false);
@@ -31,8 +43,12 @@ export function ExportPanel() {
     [],
   );
 
-  const resolution =
-    resolutionPresets.find((preset) => preset.id === resolutionId) ?? resolutionPresets[0];
+  const isCustom = resolutionId === 'custom';
+  const preset =
+    resolutionPresets.find((item) => item.id === resolutionId) ?? resolutionPresets[0];
+  const resolution = isCustom
+    ? { width: clampDimension(customWidth), height: clampDimension(customHeight) }
+    : preset;
 
   const handleSavePng = async () => {
     setSavingPng(true);
@@ -102,23 +118,51 @@ export function ExportPanel() {
       </div>
 
       <div className="export-card-body">
-        <label className="setting">
-          <div className="setting-topper">
-            <span className="setting-name">Resolution</span>
-          </div>
+        <div className="export-group">
+          <p className="export-group-title">Resolution</p>
           <select
             className="setting-select"
             value={resolutionId}
             onChange={(event) => setResolutionId(event.target.value)}
             disabled={recording}
           >
-            {resolutionPresets.map((preset) => (
-              <option key={preset.id} value={preset.id}>
-                {preset.label}
+            {resolutionPresets.map((item) => (
+              <option key={item.id} value={item.id}>
+                {item.label}
               </option>
             ))}
+            <option value="custom">Custom…</option>
           </select>
-        </label>
+
+          {isCustom && (
+            <div className="export-dims">
+              <input
+                type="number"
+                className="setting-input"
+                value={customWidth}
+                min={MIN_DIMENSION}
+                max={MAX_DIMENSION}
+                step={1}
+                onChange={(event) => setCustomWidth(event.target.value)}
+                disabled={recording}
+                aria-label="Width in pixels"
+              />
+              <span className="export-dims-x">×</span>
+              <input
+                type="number"
+                className="setting-input"
+                value={customHeight}
+                min={MIN_DIMENSION}
+                max={MAX_DIMENSION}
+                step={1}
+                onChange={(event) => setCustomHeight(event.target.value)}
+                disabled={recording}
+                aria-label="Height in pixels"
+              />
+              <span className="export-dims-unit">px</span>
+            </div>
+          )}
+        </div>
 
         <div className="export-group">
           <p className="export-group-title">Media</p>
