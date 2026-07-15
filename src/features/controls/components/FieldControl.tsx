@@ -2,6 +2,7 @@ import type { FieldConfig } from '../../gradient/types';
 import { RangeControl } from './RangeControl';
 import { ColorControl } from './ColorControl';
 import { ToggleControl } from './ToggleControl';
+import { SegmentControl } from './SegmentControl';
 
 interface FieldControlProps<T> {
   field: FieldConfig<T>;
@@ -32,6 +33,17 @@ export function FieldControl<T>({ field, target, onPatch }: FieldControlProps<T>
       <ToggleControl
         label={field.label}
         value={field.get(target)}
+        onChange={(value) => onPatch(field.set(value, target))}
+      />
+    );
+  }
+
+  if (field.kind === 'segment') {
+    return (
+      <SegmentControl
+        label={field.label}
+        value={field.get(target)}
+        options={field.options}
         onChange={(value) => onPatch(field.set(value, target))}
       />
     );

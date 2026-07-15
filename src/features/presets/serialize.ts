@@ -5,6 +5,7 @@ import {
 } from '../gradient/config/gradientSettings';
 import {
   CONFIG_VERSION,
+  type BlendMode,
   type Blob,
   type GlobalSettings,
   type GradientConfig,
@@ -31,8 +32,20 @@ function str(value: unknown, fallback: string): string {
   return typeof value === 'string' ? value : fallback;
 }
 
-function bool(value: unknown, fallback: boolean): boolean {
-  return typeof value === 'boolean' ? value : fallback;
+const BLEND_MODES: BlendMode[] = ['layer', 'blend'];
+
+function blendMode(global: Record<string, unknown>, fallback: BlendMode): BlendMode {
+  if (
+    typeof global.blendMode === 'string' &&
+    (BLEND_MODES as string[]).includes(global.blendMode)
+  ) {
+    return global.blendMode as BlendMode;
+  }
+  // Back-compat with the old boolean `colorBlend` field (schema < 4).
+  if (typeof global.colorBlend === 'boolean') {
+    return global.colorBlend ? 'blend' : 'layer';
+  }
+  return fallback;
 }
 
 function normalizeBlob(raw: unknown): Blob {
@@ -66,7 +79,7 @@ function normalizeGlobal(raw: unknown): GlobalSettings {
   return {
     backgroundColor: str(global.backgroundColor, DEFAULT_GLOBAL.backgroundColor),
     speed: num(global.speed, DEFAULT_GLOBAL.speed),
-    colorBlend: bool(global.colorBlend, DEFAULT_GLOBAL.colorBlend),
+    blendMode: blendMode(global, DEFAULT_GLOBAL.blendMode),
   };
 }
 

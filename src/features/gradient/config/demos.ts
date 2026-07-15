@@ -26,7 +26,7 @@ function concentricScene(): GradientConfig {
   };
   return {
     version: CONFIG_VERSION,
-    global: { ...DEFAULT_GLOBAL, colorBlend: false },
+    global: { ...DEFAULT_GLOBAL, blendMode: 'layer' },
     blobs: [
       createBlob({ ...shared, size: 0.14, color: '#77bb41' }),
       createBlob({ ...shared, size: 0.093, color: '#e32400' }),
@@ -45,7 +45,7 @@ function lavaScene(): GradientConfig {
   };
   return {
     version: CONFIG_VERSION,
-    global: { backgroundColor: '#1a0500', speed: 0.25, colorBlend: true },
+    global: { backgroundColor: '#1a0500', speed: 0.25, blendMode: 'blend' },
     blobs: [
       createBlob({ ...shared, position: { x: 0.4, y: 0.62 }, size: 0.36, separation: 0.38, color: '#ff3d00' }),
       createBlob({ ...shared, position: { x: 0.6, y: 0.42 }, size: 0.3, separation: 0.34, color: '#ffb300' }),

@@ -1,4 +1,4 @@
-import type { GradientConfig } from '../types';
+import type { BlendMode, GradientConfig } from '../types';
 import { hexToNormalizedRgb } from '../utils/color';
 import { vertexShaderSource } from './shaders/gradient.vert';
 import { fragmentShaderSource, MAX_BLOBS } from './shaders/gradient.frag';
@@ -10,6 +10,11 @@ const QUAD_VERTICES = new Float32Array([
 ]);
 
 const DEG_TO_RAD = Math.PI / 180;
+
+const BLEND_MODE_INDEX: Record<BlendMode, number> = {
+  layer: 0,
+  blend: 1,
+};
 
 /**
  * WebGL2 implementation of {@link GradientRenderer}.
@@ -41,7 +46,7 @@ export class WebGLGradientRenderer implements GradientRenderer {
   private readonly bgColor = new Float32Array(3);
   private blobCount = 0;
   private speed = 1;
-  private colorBlend = 0;
+  private blendMode = 0;
 
   private rafId: number | null = null;
   private lastTimestamp = 0;
@@ -98,7 +103,7 @@ export class WebGLGradientRenderer implements GradientRenderer {
     const count = Math.min(config.blobs.length, MAX_BLOBS);
     this.blobCount = count;
     this.speed = config.global.speed;
-    this.colorBlend = config.global.colorBlend ? 1 : 0;
+    this.blendMode = BLEND_MODE_INDEX[config.global.blendMode] ?? 0;
 
     const [bgR, bgG, bgB] = hexToNormalizedRgb(config.global.backgroundColor);
     this.bgColor[0] = bgR;
@@ -235,7 +240,7 @@ export class WebGLGradientRenderer implements GradientRenderer {
 
     this.setUniform1i('u_blob_count', this.blobCount);
     this.setUniform1f('u_time_multiplier', this.speed);
-    this.setUniform1i('u_color_blend', this.colorBlend);
+    this.setUniform1i('u_blend_mode', this.blendMode);
     this.setUniform3fv('u_bg_color', this.bgColor);
 
     this.setUniform2fv('u_blob_pos', this.posArray);

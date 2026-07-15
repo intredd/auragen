@@ -46,7 +46,7 @@ export function createBlob(overrides: Partial<Omit<Blob, 'id'>> = {}): Blob {
 export const DEFAULT_GLOBAL: GlobalSettings = {
   backgroundColor: '#1b0b2e',
   speed: 0.5,
-  colorBlend: false,
+  blendMode: 'layer',
 };
 
 /**
@@ -63,7 +63,7 @@ export function createDefaultConfig(): GradientConfig {
   };
   return {
     version: CONFIG_VERSION,
-    global: { backgroundColor: '#030a18', speed: 0.5, colorBlend: true },
+    global: { backgroundColor: '#030a18', speed: 0.5, blendMode: 'blend' },
     blobs: [
       createBlob({ ...shared, position: { x: 0.32, y: 0.55 }, size: 0.26, scale: 2.4, angle: 20, color: '#17e6a0' }),
       createBlob({ ...shared, position: { x: 0.55, y: 0.5 }, size: 0.22, scale: 2.2, angle: 160, color: '#4dff7a' }),
@@ -114,5 +114,15 @@ export const blobFields: FieldConfig<Blob>[] = [
 export const globalFields: FieldConfig<GlobalSettings>[] = [
   { kind: 'color', id: 'backgroundColor', label: 'Background', get: (g) => g.backgroundColor, set: (v) => ({ backgroundColor: v }) },
   { kind: 'range', id: 'speed', label: 'Animation speed', min: 0, max: 2, step: 0.01, get: (g) => g.speed, set: (v) => ({ speed: v }) },
-  { kind: 'toggle', id: 'colorBlend', label: 'Blend blob colors', get: (g) => g.colorBlend, set: (v) => ({ colorBlend: v }) },
+  {
+    kind: 'segment',
+    id: 'blendMode',
+    label: 'Blob interaction',
+    options: [
+      { value: 'layer', label: 'Layer' },
+      { value: 'blend', label: 'Blend' },
+    ],
+    get: (g) => g.blendMode,
+    set: (v) => ({ blendMode: v as GlobalSettings['blendMode'] }),
+  },
 ];

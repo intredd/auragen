@@ -12,7 +12,8 @@ uniform vec2 u_resolution;
 uniform float u_time;
 uniform float u_time_multiplier;
 uniform vec3 u_bg_color;
-uniform bool u_color_blend;
+// 0 = layer (paint over), 1 = blend (mix colors)
+uniform int u_blend_mode;
 
 uniform int u_blob_count;
 uniform vec2  u_blob_pos[MAX_BLOBS];
@@ -118,7 +119,7 @@ void main() {
         coverage = coverage + shape - coverage * shape;
     }
 
-    if (u_color_blend) {
+    if (u_blend_mode == 1) {
         vec3 color = u_bg_color;
         if (blendWeight > 0.0) {
             color = mix(u_bg_color, blendAccum / blendWeight, coverage);

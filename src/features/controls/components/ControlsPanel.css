@@ -247,6 +247,39 @@
   cursor: pointer;
 }
 
+/* Segmented switch ---------------------------------------------------- */
+
+.segment {
+  display: flex;
+  width: 100%;
+  padding: 0.15vw;
+  gap: 0.15vw;
+  border-radius: 0.3vw;
+  background: var(--surface);
+  border: 1px solid var(--panel-border);
+}
+
+.segment-option {
+  flex: 1;
+  padding: 0.25vw 0;
+  font-size: 0.82vw;
+  border: none;
+  border-radius: 0.2vw;
+  background: transparent;
+  color: var(--text-dim);
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.segment-option:hover {
+  color: var(--text);
+}
+
+.segment-option.is-active {
+  background: var(--accent);
+  color: var(--accent-contrast);
+}
+
 /* Blob list + actions ------------------------------------------------- */
 
 .settings-tab-header {

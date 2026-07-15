@@ -29,20 +29,24 @@ export interface Blob {
   color: string;
 }
 
+/**
+ * How overlapping blobs combine:
+ * - `layer` — painted one over another (last on top).
+ * - `blend` — colors mix (weighted average) in overlaps.
+ */
+export type BlendMode = 'layer' | 'blend';
+
 export interface GlobalSettings {
   /** Background color as a hex string. */
   backgroundColor: string;
   /** Global animation speed multiplier. */
   speed: number;
-  /**
-   * When true, overlapping blobs mix their colors (weighted average) instead of
-   * being painted one over another.
-   */
-  colorBlend: boolean;
+  /** How overlapping blobs combine their colors. */
+  blendMode: BlendMode;
 }
 
 /** Current preset schema version. */
-export const CONFIG_VERSION = 3;
+export const CONFIG_VERSION = 4;
 
 /** Serializable description of an entire gradient scene. */
 export interface GradientConfig {
@@ -86,7 +90,23 @@ export interface ToggleFieldConfig<T> {
   set: (value: boolean, current: T) => Partial<T>;
 }
 
+export interface SegmentOption {
+  value: string;
+  label: string;
+}
+
+/** A segmented switch — pick exactly one of a small set of options. */
+export interface SegmentFieldConfig<T> {
+  kind: 'segment';
+  id: string;
+  label: string;
+  options: SegmentOption[];
+  get: (target: T) => string;
+  set: (value: string, current: T) => Partial<T>;
+}
+
 export type FieldConfig<T> =
   | RangeFieldConfig<T>
   | ColorFieldConfig<T>
-  | ToggleFieldConfig<T>;
+  | ToggleFieldConfig<T>
+  | SegmentFieldConfig<T>;
