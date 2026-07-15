@@ -111,19 +111,3 @@ use **Export → Copy embed code** in the app (bakes the current scene into the
 
 `embed-example.html` is a local smoke-test page (`npm run build:embed`, then serve
 the repo root).
-
-### Notes vs. the original demo
-
-- Any number of blobs (up to `MAX_BLOBS = 16`), each with its own color and
-  deformation — no more fixed 4 blobs / 2 shared colors.
-- Deformation is always on and playback autostarts, so motion is visible by
-  default; `speed` now actually scales the animation time.
-- Play/pause freezes at the current frame and resumes.
-- jQuery and GSAP are gone: UI is React, panel open/close is a CSS transition.
-
-## Roadmap
-
-- Export: MP4 (ffmpeg.wasm), GIF.
-- Preset library + gallery, in addition to URL sharing.
-- Optional center drift/orbit motion on top of edge deformation.
-- >16 blobs via a data-texture path if ever needed.
