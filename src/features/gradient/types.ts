@@ -67,6 +67,8 @@ export interface RangeFieldConfig<T> {
   kind: 'range';
   id: string;
   label: string;
+  /** Short explanation of what the value does, shown as a hover tooltip. */
+  hint?: string;
   min: number;
   max: number;
   step: number;
@@ -78,6 +80,8 @@ export interface ColorFieldConfig<T> {
   kind: 'color';
   id: string;
   label: string;
+  /** Short explanation of what the value does, shown as a hover tooltip. */
+  hint?: string;
   get: (target: T) => string;
   set: (value: string, current: T) => Partial<T>;
 }
@@ -86,6 +90,8 @@ export interface ToggleFieldConfig<T> {
   kind: 'toggle';
   id: string;
   label: string;
+  /** Short explanation of what the value does, shown as a hover tooltip. */
+  hint?: string;
   get: (target: T) => boolean;
   set: (value: boolean, current: T) => Partial<T>;
 }
@@ -100,6 +106,8 @@ export interface SegmentFieldConfig<T> {
   kind: 'segment';
   id: string;
   label: string;
+  /** Short explanation of what the value does, shown as a hover tooltip. */
+  hint?: string;
   options: SegmentOption[];
   get: (target: T) => string;
   set: (value: string, current: T) => Partial<T>;

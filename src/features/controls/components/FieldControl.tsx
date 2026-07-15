@@ -19,6 +19,7 @@ export function FieldControl<T>({ field, target, onPatch }: FieldControlProps<T>
     return (
       <RangeControl
         label={field.label}
+        hint={field.hint}
         value={field.get(target)}
         min={field.min}
         max={field.max}
@@ -32,6 +33,7 @@ export function FieldControl<T>({ field, target, onPatch }: FieldControlProps<T>
     return (
       <ToggleControl
         label={field.label}
+        hint={field.hint}
         value={field.get(target)}
         onChange={(value) => onPatch(field.set(value, target))}
       />
@@ -42,6 +44,7 @@ export function FieldControl<T>({ field, target, onPatch }: FieldControlProps<T>
     return (
       <SegmentControl
         label={field.label}
+        hint={field.hint}
         value={field.get(target)}
         options={field.options}
         onChange={(value) => onPatch(field.set(value, target))}
@@ -52,6 +55,7 @@ export function FieldControl<T>({ field, target, onPatch }: FieldControlProps<T>
   return (
     <ColorControl
       label={field.label}
+      hint={field.hint}
       value={field.get(target)}
       onChange={(value) => onPatch(field.set(value, target))}
     />

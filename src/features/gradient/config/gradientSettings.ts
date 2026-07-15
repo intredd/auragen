@@ -80,14 +80,15 @@ export function createDefaultConfig(): GradientConfig {
 export const visualBlobFieldIds = ['size', 'scale', 'angle', 'positionX', 'positionY'];
 
 export const blobFields: FieldConfig<Blob>[] = [
-  { kind: 'color', id: 'color', label: 'Color', get: (b) => b.color, set: (v) => ({ color: v }) },
-  { kind: 'range', id: 'size', label: 'Size', min: 0.02, max: 2, step: 0.01, get: (b) => b.size, set: (v) => ({ size: v }) },
-  { kind: 'range', id: 'scale', label: 'Oval stretch', min: 0.2, max: 3, step: 0.05, get: (b) => b.scale, set: (v) => ({ scale: v }) },
-  { kind: 'range', id: 'angle', label: 'Rotation', min: 0, max: 180, step: 1, get: (b) => b.angle, set: (v) => ({ angle: v }) },
+  { kind: 'color', id: 'color', label: 'Color', hint: 'Base color of this blob.', get: (b) => b.color, set: (v) => ({ color: v }) },
+  { kind: 'range', id: 'size', label: 'Size', hint: 'Radius of the blob as a fraction of the canvas. Wobble amount adds to this, so a small value can still look large.', min: 0.02, max: 2, step: 0.01, get: (b) => b.size, set: (v) => ({ size: v }) },
+  { kind: 'range', id: 'scale', label: 'Oval stretch', hint: 'Stretches the blob into an oval along one axis. 1 keeps it a circle.', min: 0.2, max: 3, step: 0.05, get: (b) => b.scale, set: (v) => ({ scale: v }) },
+  { kind: 'range', id: 'angle', label: 'Rotation', hint: 'Rotates the oval. Only visible when Oval stretch is not 1.', min: 0, max: 180, step: 1, get: (b) => b.angle, set: (v) => ({ angle: v }) },
   {
     kind: 'range',
     id: 'positionX',
     label: 'Position X',
+    hint: 'Horizontal center of the blob across the canvas (0 = left, 1 = right).',
     min: -2,
     max: 2,
     step: 0.05,
@@ -98,26 +99,28 @@ export const blobFields: FieldConfig<Blob>[] = [
     kind: 'range',
     id: 'positionY',
     label: 'Position Y',
+    hint: 'Vertical center of the blob across the canvas (0 = top, 1 = bottom).',
     min: -2,
     max: 2,
     step: 0.05,
     get: (b) => b.position.y,
     set: (v, b) => ({ position: { ...b.position, y: v } }),
   },
-  { kind: 'range', id: 'smoothStep', label: 'Edge softness', min: 0.01, max: 2, step: 0.01, get: (b) => b.smoothStep, set: (v) => ({ smoothStep: v }) },
-  { kind: 'range', id: 'cornerSmoothing', label: 'Edge feather', min: 0.05, max: 8, step: 0.05, get: (b) => b.cornerSmoothing, set: (v) => ({ cornerSmoothing: v }) },
-  { kind: 'range', id: 'deformationRatio', label: 'Wobble detail', min: 0, max: 5, step: 0.05, get: (b) => b.deformationRatio, set: (v) => ({ deformationRatio: v }) },
-  { kind: 'range', id: 'separation', label: 'Wobble amount', min: 0, max: 0.5, step: 0.005, get: (b) => b.separation, set: (v) => ({ separation: v }) },
-  { kind: 'range', id: 'deformationSpeed', label: 'Wobble speed', min: 0, max: 2, step: 0.01, get: (b) => b.deformationSpeed, set: (v) => ({ deformationSpeed: v }) },
+  { kind: 'range', id: 'smoothStep', label: 'Edge softness', hint: 'Width of the edge fade. Higher makes the outline blurrier and more diffuse.', min: 0.01, max: 2, step: 0.01, get: (b) => b.smoothStep, set: (v) => ({ smoothStep: v }) },
+  { kind: 'range', id: 'cornerSmoothing', label: 'Edge feather', hint: 'How the body fades from its center. Lower spreads the glow wider, higher keeps it compact.', min: 0.05, max: 8, step: 0.05, get: (b) => b.cornerSmoothing, set: (v) => ({ cornerSmoothing: v }) },
+  { kind: 'range', id: 'deformationRatio', label: 'Wobble detail', hint: 'Number of lobes in the edge wobble. Higher gives a more detailed, spiky outline.', min: 0, max: 5, step: 0.05, get: (b) => b.deformationRatio, set: (v) => ({ deformationRatio: v }) },
+  { kind: 'range', id: 'separation', label: 'Wobble amount', hint: 'How far the edge deforms from a clean shape. Also grows the effective size.', min: 0, max: 0.5, step: 0.005, get: (b) => b.separation, set: (v) => ({ separation: v }) },
+  { kind: 'range', id: 'deformationSpeed', label: 'Wobble speed', hint: 'How fast the edge wobble drifts over time. 0 freezes the shape.', min: 0, max: 2, step: 0.01, get: (b) => b.deformationSpeed, set: (v) => ({ deformationSpeed: v }) },
 ];
 
 export const globalFields: FieldConfig<GlobalSettings>[] = [
-  { kind: 'color', id: 'backgroundColor', label: 'Background', get: (g) => g.backgroundColor, set: (v) => ({ backgroundColor: v }) },
-  { kind: 'range', id: 'speed', label: 'Animation speed', min: 0, max: 2, step: 0.01, get: (g) => g.speed, set: (v) => ({ speed: v }) },
+  { kind: 'color', id: 'backgroundColor', label: 'Background', hint: 'Canvas color behind all blobs.', get: (g) => g.backgroundColor, set: (v) => ({ backgroundColor: v }) },
+  { kind: 'range', id: 'speed', label: 'Animation speed', hint: 'Global multiplier for all motion. 0 pauses the animation.', min: 0, max: 2, step: 0.01, get: (g) => g.speed, set: (v) => ({ speed: v }) },
   {
     kind: 'segment',
     id: 'blendMode',
     label: 'Blob interaction',
+    hint: 'Layer paints blobs one over another; Blend mixes their colors where they overlap.',
     options: [
       { value: 'layer', label: 'Layer' },
       { value: 'blend', label: 'Blend' },
