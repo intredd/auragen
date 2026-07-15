@@ -1,10 +1,18 @@
 import { serializeConfig } from '../presets';
 import type { GradientConfig } from '../gradient/types';
 
-/** Where the built `gradient-gen.js` web component is expected to be hosted. */
+/**
+ * jsDelivr CDN URL for the built `<gradient-gen>` web component, served straight
+ * from the GitHub repo. Produce the file with `npm run build:embed` and commit
+ * `dist-embed/gradient-gen.js` so jsDelivr can serve it. Swap `@main` for a
+ * release tag (e.g. `@v1.0.0`) to get an immutable, permanently cached URL.
+ */
+const EMBED_SCRIPT_URL =
+  'https://cdn.jsdelivr.net/gh/intredd/auragen@main/dist-embed/gradient-gen.js';
+
+/** Where the built `gradient-gen.js` web component is hosted (jsDelivr CDN). */
 export function defaultEmbedScriptUrl(): string {
-  const origin = typeof window !== 'undefined' ? window.location.origin : 'https://your-host';
-  return `${origin}/gradient-gen.js`;
+  return EMBED_SCRIPT_URL;
 }
 
 export interface EmbedSnippetOptions {

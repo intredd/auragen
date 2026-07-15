@@ -5,9 +5,12 @@ node_modules
 
 # Build output
 dist
-dist-embed
 dist-ssr
 *.local
+
+# Embed build: ignore everything except the committed bundle that jsDelivr serves
+dist-embed/*
+!dist-embed/gradient-gen.js
 
 # Logs
 logs
