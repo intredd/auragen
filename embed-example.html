@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>&lt;gradient-gen&gt; embed example</title>
+    <style>
+      body {
+        margin: 0;
+        font-family: system-ui, sans-serif;
+        background: #111;
+        color: #eee;
+        display: grid;
+        gap: 24px;
+        padding: 32px;
+      }
+      h1 { font-size: 18px; font-weight: 500; }
+      .frame { border: 1px solid #333; border-radius: 12px; overflow: hidden; }
+    </style>
+  </head>
+  <body>
+    <h1>&lt;gradient-gen&gt; — default preset</h1>
+    <div class="frame">
+      <gradient-gen style="display:block;width:100%;height:360px"></gradient-gen>
+    </div>
+
+    <h1>&lt;gradient-gen&gt; — paused</h1>
+    <div class="frame">
+      <gradient-gen autoplay="false" style="display:block;width:100%;height:240px"></gradient-gen>
+    </div>
+
+    <!-- After `npm run build:embed`, gradient-gen.js is emitted to dist-embed/. -->
+    <script src="./dist-embed/gradient-gen.js" defer></script>
+  </body>
+</html>

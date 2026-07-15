@@ -1,0 +1,357 @@
+.panel-parent {
+  position: absolute;
+  top: 1vw;
+  right: 1vw;
+  width: 20vw;
+  height: var(--panel-collapsed-h);
+  padding-block: 0.5vw;
+  padding-inline: 0.5vw;
+  border-radius: 0.6vw;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 1vw;
+  background-color: var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  box-shadow: 0 0.6vw 2vw rgba(0, 0, 0, 0.45);
+  color: var(--text);
+  transition: height 0.5s ease;
+  z-index: 2;
+}
+
+.panel-parent.is-open {
+  height: calc(100% - 2vw);
+  overflow-y: auto;
+}
+
+.panel-parent::-webkit-scrollbar {
+  width: 0.2vw;
+}
+
+.panel-parent::-webkit-scrollbar-thumb {
+  background-color: var(--panel-border);
+  border-radius: 0.5vw;
+}
+
+.panel-parent::-webkit-scrollbar-track {
+  background: var(--panel-bg);
+}
+
+/* Topper -------------------------------------------------------------- */
+
+.panel-topper {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.panel-screen-menu {
+  display: flex;
+  align-items: center;
+  gap: 0.5vw;
+}
+
+.panel-screenshot {
+  height: 1.4vw;
+  width: 1.4vw;
+  border: 0.3vw dashed var(--accent);
+  border-radius: 0.2vw;
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+}
+
+.panel-screencast {
+  height: 1.6vw;
+  width: 1.6vw;
+  border: none;
+  border-radius: 100%;
+  background-color: #bb0000;
+  cursor: pointer;
+  padding: 0;
+}
+
+.panel-screencast.is-recording {
+  animation: recording-pulse 1s ease-in-out infinite;
+}
+
+@keyframes recording-pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.4;
+    transform: scale(0.85);
+  }
+}
+
+.panel-play,
+.panel-share {
+  box-sizing: border-box;
+  padding: 0.2vw 0.7vw;
+  display: flex;
+  align-items: center;
+  font-size: 0.9vw;
+  border: none;
+  border-radius: 0.25vw;
+  background-color: var(--accent);
+  color: var(--accent-contrast);
+  cursor: pointer;
+}
+
+.panel-share,
+.panel-export {
+  background-color: transparent;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+}
+
+.panel-export {
+  box-sizing: border-box;
+  padding: 0.2vw 0.7vw;
+  display: flex;
+  align-items: center;
+  font-size: 0.9vw;
+  border-radius: 0.25vw;
+  cursor: pointer;
+}
+
+.panel-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--accent);
+  border-radius: 0.25vw;
+  background: transparent;
+  color: var(--accent);
+  cursor: pointer;
+  padding: 0.15vw;
+}
+
+.panel-toggle-icon {
+  width: 1.3vw;
+  height: 1.3vw;
+  transition: transform 0.3s ease;
+}
+
+.panel-toggle.is-open .panel-toggle-icon {
+  transform: rotate(180deg);
+}
+
+.panel-handles {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.2vw 0.35vw;
+  border: 1px solid var(--panel-border);
+  border-radius: 0.25vw;
+  background: transparent;
+  color: var(--text-dim);
+  cursor: pointer;
+}
+
+.panel-handles.is-active {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.panel-handles svg {
+  width: 1.1vw;
+  height: 1.1vw;
+}
+
+/* Settings ------------------------------------------------------------ */
+
+.panel-settings {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1vw;
+}
+
+.settings-tab {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.5vw;
+}
+
+.settings-tab-name {
+  font-size: 1.2vw;
+  font-weight: 300;
+  color: var(--accent);
+}
+
+.settings-tab-menu {
+  padding-inline-start: 1vw;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.75vw;
+}
+
+.setting {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.3vw;
+}
+
+.setting--inline {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.setting-topper {
+  width: 100%;
+  display: flex;
+  gap: 0.5vw;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.setting-name {
+  font-size: 0.95vw;
+  font-weight: 300;
+}
+
+.setting-value {
+  font-size: 0.85vw;
+  opacity: 0.6;
+  font-variant-numeric: tabular-nums;
+}
+
+.setting-range {
+  width: 100%;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+.setting-color {
+  width: 3vw;
+  height: 1.5vw;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.setting-checkbox {
+  width: 1vw;
+  height: 1vw;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+/* Blob list + actions ------------------------------------------------- */
+
+.settings-tab-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5vw;
+}
+
+.settings-tab-count {
+  opacity: 0.5;
+  font-size: 0.85vw;
+}
+
+.panel-btn {
+  font-size: 0.85vw;
+  padding: 0.2vw 0.6vw;
+  border: 1px solid var(--accent);
+  border-radius: 0.2vw;
+  background: transparent;
+  color: var(--accent);
+  cursor: pointer;
+}
+
+.panel-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.panel-btn--danger {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+.blob-actions {
+  display: flex;
+  gap: 0.4vw;
+}
+
+.blob-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4vw;
+}
+
+.blob-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4vw;
+  padding: 0.25vw 0.6vw;
+  font-size: 0.85vw;
+  border: 1px solid transparent;
+  border-radius: 0.3vw;
+  background: var(--surface);
+  color: inherit;
+  cursor: pointer;
+}
+
+.blob-chip.is-selected {
+  border-color: var(--accent);
+  background: var(--surface-strong);
+}
+
+.blob-chip-color {
+  width: 0.9vw;
+  height: 0.9vw;
+  border-radius: 100%;
+  border: 1px solid var(--hairline);
+}
+
+.reveal-toggle {
+  align-self: flex-start;
+  padding: 0.1vw 0;
+  border: none;
+  background: transparent;
+  color: var(--text-dim);
+  font-size: 0.85vw;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.reveal-toggle:hover {
+  color: var(--accent);
+}
+
+.panel-reset {
+  align-self: flex-start;
+  margin-top: 0.5vw;
+}
+
+/* Export section ------------------------------------------------------- */
+
+.setting-select {
+  width: 100%;
+  padding: 0.3vw 0.5vw;
+  border-radius: 0.2vw;
+  border: 1px solid var(--panel-border);
+  background: var(--surface);
+  color: inherit;
+  font-size: 0.85vw;
+}
+
+.export-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4vw;
+}

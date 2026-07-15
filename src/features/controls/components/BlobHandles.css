@@ -1,0 +1,87 @@
+.blob-handles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  user-select: none;
+  /* Contrast color for helpers, derived from the background (set inline). */
+  --handle-contrast: #ffffff;
+}
+
+/*
+ * Helpers (dashed ellipse, guide line, rotate/stretch handle) are drawn in a
+ * color chosen to contrast the background, so they read over any scene.
+ */
+.blob-helpers {
+  position: absolute;
+  inset: 0;
+  overflow: visible;
+  pointer-events: none;
+}
+
+/* Anchors render in each blob's own color, on top of the helpers. */
+.blob-anchors {
+  position: absolute;
+  inset: 0;
+  overflow: visible;
+  pointer-events: none;
+}
+
+/* Full-viewport transparent hit area to clear selection on empty clicks. */
+.gizmo-backdrop {
+  fill: transparent;
+  pointer-events: all;
+  cursor: default;
+}
+
+.gizmo-outline {
+  fill: none;
+  stroke: var(--handle-contrast);
+  stroke-width: 1.5;
+  stroke-dasharray: 5 5;
+  pointer-events: none;
+}
+
+/* Wide, invisible hit area over the dashed ring for grabbing to resize. */
+.gizmo-outline-hit {
+  fill: none;
+  stroke: transparent;
+  stroke-width: 18;
+  pointer-events: stroke;
+  cursor: nwse-resize;
+}
+
+.gizmo-line {
+  stroke: var(--handle-contrast);
+  stroke-width: 1;
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.gizmo-handle-major {
+  fill: var(--handle-contrast);
+  pointer-events: all;
+  touch-action: none;
+  cursor: crosshair;
+}
+
+.anchor {
+  stroke: var(--handle-contrast);
+  stroke-width: 2;
+  pointer-events: all;
+  touch-action: none;
+  cursor: move;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.45));
+}
+
+.anchor.is-selected {
+  stroke-width: 3;
+}
+
+.anchor-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-anchor: middle;
+  dominant-baseline: central;
+  pointer-events: none;
+  user-select: none;
+}

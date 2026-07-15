@@ -1,0 +1,104 @@
+/*
+ * Floating, glassy export menu that slides in just below the collapsed main
+ * panel (top-right). It's revealed only after the panel finishes collapsing.
+ */
+.export-card {
+  position: fixed;
+  top: calc(1vw + var(--panel-collapsed-h) + 0.6vw);
+  right: 1vw;
+  z-index: 5;
+  width: 20vw;
+  min-width: 260px;
+  padding: 1.2vw;
+  border-radius: 0.8vw;
+  background: var(--panel-glass);
+  border: 1px solid var(--panel-glass-border);
+  backdrop-filter: blur(16px);
+  box-shadow: 0 1vw 3vw rgba(0, 0, 0, 0.45);
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+  gap: 1vw;
+  animation: export-in 0.25s ease both;
+}
+
+@keyframes export-in {
+  from {
+    opacity: 0;
+    transform: translateY(-0.6vw);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.export-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.export-card-title {
+  font-size: 1.2vw;
+  color: var(--accent);
+}
+
+.export-close {
+  border: none;
+  background: transparent;
+  color: var(--text-dim);
+  font-size: 1.4vw;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 0.3vw;
+}
+
+.export-close:hover {
+  color: var(--text);
+}
+
+.export-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1vw;
+}
+
+.export-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5vw;
+}
+
+.export-group-title {
+  font-size: 0.95vw;
+  color: var(--text-dim);
+}
+
+.export-hint {
+  font-size: 0.8vw;
+  color: var(--text-dim);
+  line-height: 1.4;
+}
+
+.export-hint code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.78vw;
+  color: var(--accent);
+}
+
+.panel-btn--recording {
+  border-color: var(--danger);
+  color: var(--danger);
+  animation: export-recording-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes export-recording-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.55;
+  }
+}

@@ -1,0 +1,55 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  font-family: 'Switzer', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  font-weight: 300;
+  color-scheme: dark;
+
+  /* UI palette (kept in sync with the default pink/violet gradient) */
+  --accent: #c9a7ff;
+  --accent-strong: #b98cff;
+  --accent-contrast: #1a1030;
+  --danger: #ff6b8a;
+
+  --text: #efeaf8;
+  --text-dim: #a79fbd;
+
+  /* Collapsed height of the main panel (just the toolbar row) */
+  --panel-collapsed-h: 2.8vw;
+
+  /* Main panel — strict, fully opaque surfaces */
+  --panel-bg: #17121f;
+  --panel-border: #2c2540;
+  --surface: #201a2c;
+  --surface-strong: #322a48;
+  --hairline: #6b6483;
+
+  /* Export menu keeps a translucent, glassy look */
+  --panel-glass: rgba(24, 18, 40, 0.6);
+  --panel-glass-border: rgba(255, 255, 255, 0.12);
+}
+
+html,
+body,
+#root {
+  width: 100%;
+  height: 100%;
+}
+
+body {
+  overflow: hidden;
+  position: relative;
+}
+
+body::-webkit-scrollbar {
+  display: none;
+}
