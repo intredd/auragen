@@ -6,11 +6,19 @@ interface SegmentControlProps {
   value: string;
   options: SegmentOption[];
   hint?: string;
+  disabled?: boolean;
   onChange: (value: string) => void;
 }
 
 /** A segmented switch: pick exactly one of a few options, shown side by side. */
-export function SegmentControl({ label, value, options, hint, onChange }: SegmentControlProps) {
+export function SegmentControl({
+  label,
+  value,
+  options,
+  hint,
+  disabled,
+  onChange,
+}: SegmentControlProps) {
   return (
     <div className="setting">
       <div className="setting-topper">
@@ -28,6 +36,7 @@ export function SegmentControl({ label, value, options, hint, onChange }: Segmen
             aria-checked={option.value === value}
             className={`segment-option${option.value === value ? ' is-active' : ''}`}
             onClick={() => onChange(option.value)}
+            disabled={disabled}
           >
             {option.label}
           </button>

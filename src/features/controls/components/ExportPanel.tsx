@@ -10,6 +10,7 @@ import {
   timestampedName,
   type RecordingSession,
 } from '../../export';
+import { SegmentControl } from './SegmentControl';
 import './ExportPanel.css';
 
 const MIN_DIMENSION = 16;
@@ -17,6 +18,23 @@ const MAX_DIMENSION = 8192;
 
 /** Selectable capture frame rates for video export. */
 const FPS_OPTIONS = [24, 30, 60, 90, 120] as const;
+
+/** Video quality → bits-per-pixel-per-frame factor for the target bitrate. */
+const QUALITY_OPTIONS = [
+  { value: 'low', label: 'Low' },
+  { value: 'medium', label: 'Medium' },
+  { value: 'high', label: 'High' },
+];
+const QUALITY_BPP: Record<string, number> = { low: 0.05, medium: 0.1, high: 0.2 };
+
+/**
+ * Target video bitrate, scaled by resolution and frame rate so a 4K clip isn't
+ * starved by the browser's fixed ~2.5 Mbps default.
+ */
+function videoBitrate(quality: string, width: number, height: number, fps: number): number {
+  const bpp = QUALITY_BPP[quality] ?? QUALITY_BPP.medium;
+  return Math.round(bpp * width * height * fps);
+}
 
 /** Parse a dimension input into a safe, integer pixel size. */
 function clampDimension(value: string): number {
@@ -34,6 +52,7 @@ export function ExportPanel() {
   const [customWidth, setCustomWidth] = useState('1600');
   const [customHeight, setCustomHeight] = useState('900');
   const [fps, setFps] = useState(60);
+  const [quality, setQuality] = useState('medium');
   const [savingPng, setSavingPng] = useState(false);
   const [recording, setRecording] = useState(false);
   const [embedCopied, setEmbedCopied] = useState(false);
@@ -53,6 +72,10 @@ export function ExportPanel() {
   const resolution = isCustom
     ? { width: clampDimension(customWidth), height: clampDimension(customHeight) }
     : preset;
+
+  const estBitrate = videoBitrate(quality, resolution.width, resolution.height, fps);
+  const estMbps = estBitrate / 1_000_000;
+  const estMbPerSec = estBitrate / 8_000_000;
 
   const handleSavePng = async () => {
     setSavingPng(true);
@@ -84,7 +107,10 @@ export function ExportPanel() {
         config,
         resolution.width,
         resolution.height,
-        { fps },
+        {
+          fps,
+          videoBitsPerSecond: videoBitrate(quality, resolution.width, resolution.height, fps),
+        },
       );
       setRecording(true);
     } catch {
@@ -169,9 +195,21 @@ export function ExportPanel() {
         </div>
 
         <div className="export-group">
-          <p className="export-group-title">Media</p>
+          <p className="export-group-title">Image</p>
+          <button
+            type="button"
+            className="panel-btn"
+            onClick={handleSavePng}
+            disabled={savingPng || recording}
+          >
+            {savingPng ? 'Saving…' : 'Save PNG'}
+          </button>
+        </div>
+
+        <div className="export-group">
+          <p className="export-group-title">Video</p>
           <label className="export-field">
-            <span className="export-field-label">Video frame rate</span>
+            <span className="export-field-label">Frame rate</span>
             <select
               className="setting-select export-field-select"
               value={fps}
@@ -185,23 +223,25 @@ export function ExportPanel() {
               ))}
             </select>
           </label>
-          <div className="export-actions">
-            <button
-              type="button"
-              className="panel-btn"
-              onClick={handleSavePng}
-              disabled={savingPng || recording}
-            >
-              {savingPng ? 'Saving…' : 'Save PNG'}
-            </button>
-            <button
-              type="button"
-              className={`panel-btn${recording ? ' panel-btn--recording' : ''}`}
-              onClick={handleToggleVideo}
-            >
-              {recording ? '■ Stop & save video' : '● Record video'}
-            </button>
-          </div>
+          <SegmentControl
+            label="Quality"
+            hint="Higher quality raises the video bitrate — a sharper result but a larger file. Scales with the chosen resolution and frame rate."
+            value={quality}
+            options={QUALITY_OPTIONS}
+            onChange={setQuality}
+            disabled={recording}
+          />
+          <p className="export-hint">
+            Target ≈ {estMbps >= 10 ? estMbps.toFixed(0) : estMbps.toFixed(1)} Mbps · ~
+            {estMbPerSec.toFixed(1)} MB/s
+          </p>
+          <button
+            type="button"
+            className={`panel-btn${recording ? ' panel-btn--recording' : ''}`}
+            onClick={handleToggleVideo}
+          >
+            {recording ? '■ Stop & save video' : '● Record video'}
+          </button>
           {recording && <p className="export-hint">Recording… click stop when you’re done.</p>}
         </div>
 

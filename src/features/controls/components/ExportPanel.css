@@ -117,6 +117,13 @@
   min-width: 6vw;
 }
 
+/* The Quality segmented control reuses the panel's .setting markup; tone its
+   label down to match the export card's muted group labels. */
+.export-card .setting-name {
+  font-size: 0.85vw;
+  color: var(--text-dim);
+}
+
 .export-hint {
   font-size: 0.8vw;
   color: var(--text-dim);
