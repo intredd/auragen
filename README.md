@@ -24,7 +24,8 @@ No install, no sign-up. Open the link, tweak a scene, hit export.
 - **Start from a preset** in the Demo menu (Aurora, Morph, Layered rings) and make
   it your own.
 - **Export** a PNG or a WebM video at a preset or custom resolution, with
-  adjustable frame rate and quality.
+  adjustable frame rate, quality, and an optional **seamless loop** mode for
+  truly tileable clips.
 - **Share** a scene with a link, or **embed** it on your own site.
 
 ## How to use
@@ -48,9 +49,10 @@ No install, no sign-up. Open the link, tweak a scene, hit export.
    preview the clean result.
 6. **Export or share.** Open the **Export** menu to:
    - save a **PNG**,
-   - record a **video** (play/stop — you control the length),
-   - choose a **resolution**, **frame rate**, and **quality** (the target
-     bitrate is shown live),
+   - record a **video** — manual length in normal mode, or a **seamless loop**
+     that auto-stops at `loopDurationSec` with matching first/last frames,
+   - choose **resolution**, **frame rate**, **quality** (live bitrate estimate),
+     and **loop mode** (`Off` / `Seamless`),
    - **copy a share link** or the **embed code**.
 
 ## Embed on your site
@@ -180,7 +182,8 @@ interface GradientConfig { version: number; blobs: Blob[]; global: GlobalSetting
    rotate/stretch handle (major axis). A click (no drag) selects and opens its
    menu. The overlay can be toggled off from the toolbar.
 5. Media/embed export lives in its own menu (toolbar → Export); `export` and
-   `presets` read the same config, keeping one source of truth.
+   `presets` read the same config, keeping one source of truth. Video export can
+   remap shader time to a cyclic phase (`a = 2πu`) for seamless loops.
 
 `embed-example.html` is a local smoke-test page (`npm run build:embed`, then serve
 the repo root).
