@@ -23,8 +23,8 @@ No install, no sign-up. Open the link, tweak a scene, hit export.
   them where they overlap.
 - **Start from a preset** in the Demo menu (Aurora, Morph, Layered rings) and make
   it your own.
-- **Export** a PNG or a WebM video at a preset or custom resolution, with a
-  selectable frame rate.
+- **Export** a PNG or a WebM video at a preset or custom resolution, with
+  adjustable frame rate and quality.
 - **Share** a scene with a link, or **embed** it on your own site.
 
 ## How to use
@@ -49,7 +49,8 @@ No install, no sign-up. Open the link, tweak a scene, hit export.
 6. **Export or share.** Open the **Export** menu to:
    - save a **PNG**,
    - record a **video** (play/stop — you control the length),
-   - choose a **resolution** and **frame rate**,
+   - choose a **resolution**, **frame rate**, and **quality** (the target
+     bitrate is shown live),
    - **copy a share link** or the **embed code**.
 
 ## Embed on your site
