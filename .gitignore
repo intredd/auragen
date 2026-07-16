@@ -34,5 +34,5 @@ pnpm-debug.log*
 # Personal / not for the public repo
 PORTFOLIO.md
 
-# Hero source recording — only the generated docs/hero.gif is committed
+# Hero source recording — only the generated docs/hero.webp (or .gif) is committed
 docs/*.webm
