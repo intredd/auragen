@@ -4,7 +4,7 @@ Design **live, animated gradients** in your browser, then export them as images 
 video for social posts, posters, and website backgrounds — or drop them into any
 page as a ready-made web component.
 
-[![Auragen — design live, animated gradients in the browser](docs/hero.gif)](https://intredd.github.io/auragen/)
+[![Auragen — design live, animated gradients in the browser](docs/hero.webp)](https://intredd.github.io/auragen/)
 
 ### ▶ [Try it live → intredd.github.io/auragen](https://intredd.github.io/auragen/)
 
