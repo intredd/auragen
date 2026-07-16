@@ -3,15 +3,29 @@ import type { GradientConfig } from '../gradient/types';
 import { captureImage, type CaptureImageOptions } from './captureImage';
 import { CanvasVideoRecorder, type VideoRecorderOptions } from './captureVideo';
 
+export interface ExportLoopOptions {
+  loopMode?: 'off' | 'seamless';
+  loopDurationSec?: number;
+}
+
 /**
  * Create a detached renderer at an exact pixel size, independent of the
  * on-screen canvas / viewport. Caller is responsible for disposing it.
  */
-function createOffscreenRenderer(config: GradientConfig, width: number, height: number) {
+function createOffscreenRenderer(
+  config: GradientConfig,
+  width: number,
+  height: number,
+  loopOptions: ExportLoopOptions = {},
+) {
   const canvas = document.createElement('canvas');
   const renderer = createGradientRenderer();
   renderer.mount(canvas);
   renderer.resize(width, height, 1);
+  renderer.setTimeMapping(
+    loopOptions.loopMode === 'seamless' ? 'seamless' : 'linear',
+    loopOptions.loopDurationSec ?? 6,
+  );
   renderer.setConfig(config);
   return { canvas, renderer };
 }
@@ -21,12 +35,13 @@ export async function captureImageAt(
   config: GradientConfig,
   width: number,
   height: number,
-  options: CaptureImageOptions = {},
+  options: CaptureImageOptions & ExportLoopOptions = {},
 ): Promise<Blob> {
-  const { renderer } = createOffscreenRenderer(config, width, height);
+  const { type, quality, ...loopOptions } = options;
+  const { renderer } = createOffscreenRenderer(config, width, height, loopOptions);
   try {
     renderer.renderFrame();
-    return await captureImage(renderer, options);
+    return await captureImage(renderer, { type, quality });
   } finally {
     renderer.dispose();
   }
@@ -45,25 +60,42 @@ export function createRecordingSession(
   config: GradientConfig,
   width: number,
   height: number,
-  options: VideoRecorderOptions = {},
+  options: VideoRecorderOptions & ExportLoopOptions = {},
 ): RecordingSession {
-  const { canvas, renderer } = createOffscreenRenderer(config, width, height);
+  const { loopMode, loopDurationSec, ...videoOptions } = options;
+  const { canvas, renderer } = createOffscreenRenderer(config, width, height, {
+    loopMode,
+    loopDurationSec,
+  });
 
   let recorder: CanvasVideoRecorder;
   try {
-    recorder = new CanvasVideoRecorder(canvas, options);
+    recorder = new CanvasVideoRecorder(canvas, videoOptions);
   } catch (error) {
     renderer.dispose();
     throw error;
   }
 
+  renderer.setElapsed(0);
   renderer.play();
   renderer.start();
   recorder.start();
 
+  const seamless = loopMode === 'seamless';
+
   return {
     stop: async () => {
       try {
+        if (seamless) {
+          // Snap to the loop seam (u = 0) so the last frame matches the first.
+          renderer.pause();
+          renderer.setElapsed(0);
+          renderer.renderFrame();
+          await new Promise<void>((resolve) => {
+            requestAnimationFrame(() => requestAnimationFrame(() => resolve()));
+          });
+          renderer.renderFrame();
+        }
         return await recorder.stop();
       } finally {
         renderer.dispose();

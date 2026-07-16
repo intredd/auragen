@@ -4,6 +4,7 @@ export { downloadBlob, timestampedName } from './download';
 export {
   captureImageAt,
   createRecordingSession,
+  type ExportLoopOptions,
   type RecordingSession,
 } from './renderTarget';
 export {

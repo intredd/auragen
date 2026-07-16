@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { selectConfig, useGradientStore } from '../../gradient/state/useGradientStore';
 import {
   buildEmbedSnippet,
@@ -15,9 +15,12 @@ import './ExportPanel.css';
 
 const MIN_DIMENSION = 16;
 const MAX_DIMENSION = 8192;
+const MIN_LOOP_DURATION = 0.5;
+const MAX_LOOP_DURATION = 120;
 
 /** Selectable capture frame rates for video export. */
 const FPS_OPTIONS = [24, 30, 60, 90, 120] as const;
+type LoopMode = 'off' | 'seamless';
 
 /** Video quality → bits-per-pixel-per-frame factor for the target bitrate. */
 const QUALITY_OPTIONS = [
@@ -26,6 +29,10 @@ const QUALITY_OPTIONS = [
   { value: 'high', label: 'High' },
 ];
 const QUALITY_BPP: Record<string, number> = { low: 0.05, medium: 0.1, high: 0.2 };
+const LOOP_MODE_OPTIONS = [
+  { value: 'off', label: 'Off' },
+  { value: 'seamless', label: 'Seamless' },
+];
 
 /**
  * Target video bitrate, scaled by resolution and frame rate so a 4K clip isn't
@@ -43,6 +50,16 @@ function clampDimension(value: string): number {
   return Math.min(MAX_DIMENSION, Math.max(MIN_DIMENSION, parsed));
 }
 
+function clampLoopDuration(value: string): number {
+  const parsed = Number(value);
+  if (!Number.isFinite(parsed)) return 6;
+  return Math.min(MAX_LOOP_DURATION, Math.max(MIN_LOOP_DURATION, parsed));
+}
+
+function formatRecordingTime(seconds: number): string {
+  return `${seconds.toFixed(1)}s`;
+}
+
 /** Standalone export menu (still image, clip, and embed snippet). */
 export function ExportPanel() {
   const isOpen = useGradientStore((state) => state.isExportOpen);
@@ -53,10 +70,24 @@ export function ExportPanel() {
   const [customHeight, setCustomHeight] = useState('900');
   const [fps, setFps] = useState(60);
   const [quality, setQuality] = useState('medium');
+  const [loopMode, setLoopMode] = useState<LoopMode>('off');
+  const [loopDurationSec, setLoopDurationSec] = useState('6');
   const [savingPng, setSavingPng] = useState(false);
   const [recording, setRecording] = useState(false);
+  const [recordingElapsedSec, setRecordingElapsedSec] = useState(0);
   const [embedCopied, setEmbedCopied] = useState(false);
   const sessionRef = useRef<RecordingSession | null>(null);
+  const recordingOptsRef = useRef({ seamless: false, loopDuration: 6 });
+
+  const stopAndSaveRecording = useCallback(async () => {
+    const session = sessionRef.current;
+    sessionRef.current = null;
+    setRecording(false);
+    setRecordingElapsedSec(0);
+    if (!session) return;
+    const blob = await session.stop();
+    downloadBlob(blob, timestampedName('webm'));
+  }, []);
 
   useEffect(
     () => () => {
@@ -65,6 +96,33 @@ export function ExportPanel() {
     },
     [],
   );
+
+  useEffect(() => {
+    if (!recording) {
+      setRecordingElapsedSec(0);
+      return;
+    }
+
+    const startedAt = performance.now();
+    const { seamless, loopDuration } = recordingOptsRef.current;
+
+    const tick = () => {
+      setRecordingElapsedSec((performance.now() - startedAt) / 1000);
+    };
+    tick();
+    const intervalId = window.setInterval(tick, 100);
+
+    const autoStopId = seamless
+      ? window.setTimeout(() => {
+          void stopAndSaveRecording();
+        }, loopDuration * 1000)
+      : undefined;
+
+    return () => {
+      window.clearInterval(intervalId);
+      if (autoStopId !== undefined) window.clearTimeout(autoStopId);
+    };
+  }, [recording, stopAndSaveRecording]);
 
   const isCustom = resolutionId === 'custom';
   const preset =
@@ -76,6 +134,8 @@ export function ExportPanel() {
   const estBitrate = videoBitrate(quality, resolution.width, resolution.height, fps);
   const estMbps = estBitrate / 1_000_000;
   const estMbPerSec = estBitrate / 8_000_000;
+  const loopDuration = clampLoopDuration(loopDurationSec);
+  const seamless = loopMode === 'seamless';
 
   const handleSavePng = async () => {
     setSavingPng(true);
@@ -83,6 +143,8 @@ export function ExportPanel() {
       const config = selectConfig(useGradientStore.getState());
       const blob = await captureImageAt(config, resolution.width, resolution.height, {
         type: 'image/png',
+        loopMode,
+        loopDurationSec: loopDuration,
       });
       downloadBlob(blob, timestampedName('png'));
     } finally {
@@ -92,17 +154,13 @@ export function ExportPanel() {
 
   const handleToggleVideo = async () => {
     if (recording) {
-      const session = sessionRef.current;
-      sessionRef.current = null;
-      setRecording(false);
-      if (!session) return;
-      const blob = await session.stop();
-      downloadBlob(blob, timestampedName('webm'));
+      await stopAndSaveRecording();
       return;
     }
 
     try {
       const config = selectConfig(useGradientStore.getState());
+      recordingOptsRef.current = { seamless, loopDuration };
       sessionRef.current = createRecordingSession(
         config,
         resolution.width,
@@ -110,6 +168,8 @@ export function ExportPanel() {
         {
           fps,
           videoBitsPerSecond: videoBitrate(quality, resolution.width, resolution.height, fps),
+          loopMode,
+          loopDurationSec: loopDuration,
         },
       );
       setRecording(true);
@@ -207,7 +267,31 @@ export function ExportPanel() {
         </div>
 
         <div className="export-group">
-          <p className="export-group-title">Video</p>
+          <p className="export-group-title">Video settings</p>
+          <SegmentControl
+            label="Loop mode"
+            hint="Seamless remaps animation time to a cyclic phase (a = 2πu) so the start and end frame match for a true loop."
+            value={loopMode}
+            options={LOOP_MODE_OPTIONS}
+            onChange={(value) => setLoopMode(value as LoopMode)}
+            disabled={recording}
+          />
+          {seamless && (
+            <label className="export-field">
+              <span className="export-field-label">loopDurationSec</span>
+              <input
+                type="number"
+                className="setting-input export-field-input"
+                value={loopDurationSec}
+                min={MIN_LOOP_DURATION}
+                max={MAX_LOOP_DURATION}
+                step={0.1}
+                onChange={(event) => setLoopDurationSec(event.target.value)}
+                disabled={recording}
+                aria-label="Loop duration in seconds"
+              />
+            </label>
+          )}
           <label className="export-field">
             <span className="export-field-label">Frame rate</span>
             <select
@@ -235,14 +319,24 @@ export function ExportPanel() {
             Target ≈ {estMbps >= 10 ? estMbps.toFixed(0) : estMbps.toFixed(1)} Mbps · ~
             {estMbPerSec.toFixed(1)} MB/s
           </p>
+        </div>
+
+        <div className="export-group">
+          <p className="export-group-title">Video export</p>
           <button
             type="button"
             className={`panel-btn${recording ? ' panel-btn--recording' : ''}`}
             onClick={handleToggleVideo}
           >
-            {recording ? '■ Stop & save video' : '● Record video'}
+            {recording
+              ? seamless
+                ? `■ Auto-stops at ${loopDuration >= 10 ? loopDuration.toFixed(0) : loopDuration.toFixed(1)}s (click to stop)`
+                : '■ Stop & save video'
+              : seamless
+                ? '● Record loop'
+                : '● Record video'}
           </button>
-          {recording && <p className="export-hint">Recording… click stop when you’re done.</p>}
+          {recording && <p className="export-hint">Recording: {formatRecordingTime(recordingElapsedSec)}</p>}
         </div>
 
         <div className="export-group">

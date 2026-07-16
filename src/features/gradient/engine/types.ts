@@ -14,6 +14,13 @@ export interface GradientRenderer {
   /** Replace the current scene description (cheap, called on every change). */
   setConfig(config: GradientConfig): void;
 
+  /**
+   * Configure time mapping used by animated shader effects.
+   * - `linear` keeps free-running time (default app behavior)
+   * - `seamless` remaps time to a cyclic phase for perfect loop exports
+   */
+  setTimeMapping(mode: 'linear' | 'seamless', loopDurationSec?: number): void;
+
   /** Resize the drawing buffer. `dpr` defaults to `devicePixelRatio`. */
   resize(width: number, height: number, dpr?: number): void;
 
@@ -33,6 +40,9 @@ export interface GradientRenderer {
 
   /** Draw exactly one frame immediately (used before capturing output). */
   renderFrame(): void;
+
+  /** Jump to an exact animation timestamp (seconds) and redraw. */
+  setElapsed(seconds: number): void;
 
   getCanvas(): HTMLCanvasElement | null;
 

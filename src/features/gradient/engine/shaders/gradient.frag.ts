@@ -11,6 +11,9 @@ out vec4 out_color;
 uniform vec2 u_resolution;
 uniform float u_time;
 uniform float u_time_multiplier;
+// 0 = linear time, 1 = seamless cyclic time for loop exports
+uniform int u_time_mode;
+uniform float u_loop_duration_sec;
 uniform vec3 u_bg_color;
 // 0 = layer (paint over), 1 = blend (mix colors)
 uniform int u_blend_mode;
@@ -46,6 +49,18 @@ float smoothNoise(vec2 p) {
     return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);
 }
 
+vec2 timeOffset(float deform_speed) {
+    if (u_time_mode == 1) {
+        float d = max(u_loop_duration_sec, 0.001);
+        // Wall-clock phase: one full cycle every loopDurationSec (ignores global speed).
+        float u = fract(u_time / d);
+        float a = 6.28318530718 * u; // 2πu
+        return vec2(cos(a), sin(a) * 0.75) * deform_speed;
+    }
+    float t = u_time * u_time_multiplier;
+    return t * deform_speed * vec2(1.0, 0.75);
+}
+
 // Soft-edged, time-deformed blob.
 float blob(
     vec2 uv,
@@ -58,8 +73,7 @@ float blob(
     float deform_ratio,
     float deform_speed,
     float separation,
-    float aspect,
-    float t
+    float aspect
 ) {
     vec2 p = uv - center;
     p = vec2(p.x, p.y / aspect);
@@ -73,7 +87,7 @@ float blob(
 
     float r = length(p);
 
-    float deformation = smoothNoise(p * deform_ratio + t * deform_speed * vec2(1.0, 0.75)) * separation;
+    float deformation = smoothNoise(p * deform_ratio + timeOffset(deform_speed)) * separation;
     float radius = size + deformation;
 
     float smoothEdge = exp(-r * r * corner);
@@ -84,7 +98,6 @@ void main() {
     vec2 uv = gl_FragCoord.xy / u_resolution.xy;
     uv.y = 1.0 - uv.y;
     float aspect = u_resolution.x / u_resolution.y;
-    float t = u_time * u_time_multiplier;
 
     // Layered ("over") result and the accumulators for the blended result are
     // both computed in one pass; the mode just picks which to output.
@@ -107,8 +120,7 @@ void main() {
             u_blob_deform_ratio[i],
             u_blob_deform_speed[i],
             u_blob_separation[i],
-            aspect,
-            t
+            aspect
         );
 
         layered = mix(layered, vec4(u_blob_color[i], 1.0), shape);

@@ -47,6 +47,8 @@ export class WebGLGradientRenderer implements GradientRenderer {
   private blobCount = 0;
   private speed = 1;
   private blendMode = 0;
+  private timeMode = 0; // 0 = linear, 1 = seamless loop
+  private loopDurationSec = 6;
 
   private rafId: number | null = null;
   private lastTimestamp = 0;
@@ -132,6 +134,12 @@ export class WebGLGradientRenderer implements GradientRenderer {
     this.uploadConfigUniforms();
   }
 
+  setTimeMapping(mode: 'linear' | 'seamless', loopDurationSec: number = 6): void {
+    this.timeMode = mode === 'seamless' ? 1 : 0;
+    this.loopDurationSec = Math.max(0.1, Number.isFinite(loopDurationSec) ? loopDurationSec : 6);
+    this.uploadConfigUniforms();
+  }
+
   resize(width: number, height: number, dpr: number = window.devicePixelRatio || 1): void {
     const { gl, canvas, program } = this;
     if (!gl || !canvas) return;
@@ -183,6 +191,11 @@ export class WebGLGradientRenderer implements GradientRenderer {
   }
 
   renderFrame(): void {
+    this.draw();
+  }
+
+  setElapsed(seconds: number): void {
+    this.elapsed = Math.max(0, seconds);
     this.draw();
   }
 
@@ -240,6 +253,8 @@ export class WebGLGradientRenderer implements GradientRenderer {
 
     this.setUniform1i('u_blob_count', this.blobCount);
     this.setUniform1f('u_time_multiplier', this.speed);
+    this.setUniform1i('u_time_mode', this.timeMode);
+    this.setUniform1f('u_loop_duration_sec', this.loopDurationSec);
     this.setUniform1i('u_blend_mode', this.blendMode);
     this.setUniform3fv('u_bg_color', this.bgColor);
 

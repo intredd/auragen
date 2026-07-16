@@ -117,6 +117,12 @@
   min-width: 6vw;
 }
 
+.export-field-input {
+  width: auto;
+  min-width: 6vw;
+  max-width: 8vw;
+}
+
 /* The Quality segmented control reuses the panel's .setting markup; tone its
    label down to match the export card's muted group labels. */
 .export-card .setting-name {
